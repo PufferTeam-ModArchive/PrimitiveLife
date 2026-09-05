@@ -39,6 +39,7 @@ public class VegetationFiller implements IBlockLayer {
 
                 int y = dataNoise.getHeight(x, z);
 
+                Block blockAbove = data.getBlock(x, y + 1, z);
                 Block blockBelow = data.getBlock(x, y - 1, z);
                 Block blockReplacing = data.getBlock(x, y, z);
                 if (blockBelow != Blocks.air) {
@@ -52,6 +53,20 @@ public class VegetationFiller implements IBlockLayer {
                         if (vegetation > 0.5F) {
                             if (data.random.nextFloat() < 0.05F) {
                                 placePlant(data, x, y, z, Constants.dry_grass);
+                            }
+                        }
+                    }
+                    if (BlockUtils.isWaterBlock(blockReplacing)) {
+                        if (BlockUtils.isWaterBlock(blockAbove)) {
+                            if (data.random.nextFloat() < 0.1F) {
+                                placePlant(data, x, y, z, Constants.pondweed);
+                            }
+                            if (data.random.nextFloat() < 0.1F) {
+                                placePlant(data, x, y, z, Constants.seaweed);
+                            }
+                        } else {
+                            if (data.random.nextFloat() < 0.04F) {
+                                placePlant(data, x, y, z, Constants.cattails);
                             }
                         }
                     }
@@ -116,11 +131,12 @@ public class VegetationFiller implements IBlockLayer {
                     if (plant.canSpawn(rainfall, temperature)) {
                         int y = dataNoise.getHeight(x, z);
                         Block block = data.getBlock(x, y - 1, z);
-                        Block blockReplacing = data.getBlock(x, y, z);
-                        if (block != Blocks.air && blockReplacing == Blocks.air) {
+                        if (block != Blocks.air) {
                             boolean shouldSpawn = false;
                             if (plant.isDesertic) {
                                 shouldSpawn = BlockUtils.isSandBlock(block);
+                            } else if (plant.isAquatic) {
+                                shouldSpawn = BlockUtils.isWaterBlock(block);
                             } else {
                                 shouldSpawn = BlockUtils.isGrassBlock(block);
                             }

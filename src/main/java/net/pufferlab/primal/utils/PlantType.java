@@ -19,10 +19,10 @@ public class PlantType implements IPrimalType {
     public int plantMeta2;
     public float rarity;
 
-    public float minRainfall;
-    public float maxRainfall;
-    public float minTemperature;
-    public float maxTemperature;
+    public float minRainfall = 0.0F;
+    public float maxRainfall = 1.0F;
+    public float minTemperature = 0.0F;
+    public float maxTemperature = 1.0F;
 
     public int modelType;
 

@@ -1,7 +1,6 @@
 package net.pufferlab.primal.world.structures;
 
 import java.io.File;
-import java.io.IOException;
 import java.util.*;
 
 import net.minecraft.block.Block;
@@ -30,9 +29,7 @@ public class StructureFile {
         this.name = name;
         try {
             this.file = IOUtils.createStructureFile(this.name, "nbt");
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+        } catch (Exception e) {}
         this.rotateStructure = new StructureRotated();
     }
 
@@ -178,7 +175,6 @@ public class StructureFile {
     public static void loadStructure(StructureFile file, int x, int y, int z, World world, int facing,
         LoadingPosition loadingPosition) {
         file.loadFile();
-        Primal.debugLog(file.rotateStructure.structureLists[0].toString());
 
         int height = file.getStructureHeight() / 2;
         int offsetY = 0;
