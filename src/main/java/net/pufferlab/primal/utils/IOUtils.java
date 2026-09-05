@@ -11,8 +11,11 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
+import com.google.gson.*;
 import net.minecraft.launchwrapper.Launch;
 import net.minecraft.nbt.CompressedStreamTools;
+import net.minecraft.nbt.JsonToNBT;
+import net.minecraft.nbt.NBTException;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.AxisAlignedBB;
 import net.pufferlab.primal.Primal;
@@ -48,8 +51,12 @@ public class IOUtils {
         return new File(getResourceDir(), name + "." + extension);
     }
 
-    public static File createStructureFile(String name, String extension) throws IOException {
-        return new File(getStructureDir(), name + "." + extension);
+    public static File createStructureFile(String name, String extension) {
+        try {
+            return new File(getStructureDir(), name + "." + extension);
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
     }
 
     public static File createConfigFile(String name) {
@@ -125,6 +132,54 @@ public class IOUtils {
     public static NBTTagCompound readNBTFile(File file) {
         try {
             return readNBTFile(new FileInputStream(file));
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    public static String writeNBT(NBTTagCompound nbt) {
+        try {
+            return nbt.toString();
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    public static NBTTagCompound readNBT(String string) {
+        try {
+            return (NBTTagCompound) JsonToNBT.func_150315_a(string);
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    public static final Gson gson = new GsonBuilder()
+        .setPrettyPrinting()
+        .create();
+
+    public static void writeJSON(File file, JsonObject object) {
+        try {
+            try (FileWriter writer = new FileWriter(file)) {
+                gson.toJson(object, writer);
+            } catch (JsonIOException e) {
+                throw new RuntimeException(e);
+            }
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+
+    }
+
+    public static JsonObject readJSON(File file) {
+        try {
+            try (FileReader reader = new FileReader(file)) {
+                JsonObject object = new JsonParser()
+                    .parse(reader)
+                    .getAsJsonObject();
+                return object;
+            } catch (JsonIOException e) {
+                throw new RuntimeException(e);
+            }
         } catch (IOException e) {
             throw new RuntimeException(e);
         }

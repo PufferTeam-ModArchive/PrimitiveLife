@@ -95,6 +95,7 @@ public class BlockUtils {
     }
 
     public static String getNameFromBlock(Block block) {
+        if(block == null) return "null";
         String mod = getBlockRegistry().getNameForObject(block);
         return mod;
     }
@@ -114,6 +115,7 @@ public class BlockUtils {
     public static Map<String, Block> blockMap = new HashMap<>();
 
     public static Block getBlockFromName(String name) {
+        if(name.equals("null")) return Blocks.air;
         Block block = blockMap.get(name);
         if (block == null) {
             String[] blockSplit = name.split(":");
