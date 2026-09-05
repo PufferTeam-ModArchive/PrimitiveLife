@@ -11,16 +11,16 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
-import com.google.gson.*;
 import net.minecraft.launchwrapper.Launch;
 import net.minecraft.nbt.CompressedStreamTools;
 import net.minecraft.nbt.JsonToNBT;
-import net.minecraft.nbt.NBTException;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.AxisAlignedBB;
 import net.pufferlab.primal.Primal;
 
 import org.apache.commons.io.FileUtils;
+
+import com.google.gson.*;
 
 import io.netty.buffer.ByteBuf;
 
@@ -153,8 +153,7 @@ public class IOUtils {
         }
     }
 
-    public static final Gson gson = new GsonBuilder()
-        .setPrettyPrinting()
+    public static final Gson gson = new GsonBuilder().setPrettyPrinting()
         .create();
 
     public static void writeJSON(File file, JsonObject object) {
@@ -173,8 +172,7 @@ public class IOUtils {
     public static JsonObject readJSON(File file) {
         try {
             try (FileReader reader = new FileReader(file)) {
-                JsonObject object = new JsonParser()
-                    .parse(reader)
+                JsonObject object = new JsonParser().parse(reader)
                     .getAsJsonObject();
                 return object;
             } catch (JsonIOException e) {
