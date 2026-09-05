@@ -18,8 +18,11 @@ public enum Config {
     // Vanilla Tweaks
     noTreeFistPunching(Module.early_game$tweaks, true,
         "Whether to enable no tree punching mechanics. Meaning that you cannot break logs with your fist."),
+    fallingTree(Module.early_game$tweaks, true, "Whether trees fall, so no more floating logs"),
     harderSoil(Module.early_game$tweaks, true,
         "Whether to make soil (dirt/sand) slightly harder to break, giving shovels more use"),
+    harderTrees(Module.early_game$tweaks, true,
+        "Whether to make tree logs slightly harder to break, depending on the size of the tree"),
     destructiveFallingBlocks(Module.early_game$tweaks, true,
         "Whether to make it so instead of the falling block getting destroyed on replaceable blocks, the replaceable block get destroyed instead."),
     sidewayFallingBlocks(Module.early_game$tweaks, true,

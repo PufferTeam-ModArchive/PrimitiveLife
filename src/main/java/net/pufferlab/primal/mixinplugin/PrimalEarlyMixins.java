@@ -39,6 +39,9 @@ public class PrimalEarlyMixins implements IFMLLoadingPlugin, IEarlyMixinLoader {
             mixins.add("minecraft.client.MixinBlockClient");
             mixins.add("minecraft.client.MixinMinecraft");
         }
+        if (Config.harderTrees.getBoolean()) {
+            mixins.add("minecraft.MixinBlockBreak");
+        }
         if (Config.waterloggingFix.getBoolean()) {
             if (isClient) {
                 mixins.add("minecraft.client.MixinRenderFluidBlocks");

@@ -6,6 +6,7 @@ import java.util.Map;
 
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockBush;
+import net.minecraft.block.BlockLeaves;
 import net.minecraft.block.BlockLog;
 import net.minecraft.block.material.Material;
 import net.minecraft.entity.Entity;
@@ -618,7 +619,13 @@ public class BlockUtils {
     public static boolean isLogBlock(Block block) {
         if (block == null) return false;
         if (block instanceof BlockLog) return true;
+        if (block instanceof BlockLogThin) return true;
         return Utils.containsOreDict(block, "logWood");
+    }
+
+    public static boolean isLeaveBlock(Block block) {
+        if (block instanceof BlockLeaves) return true;
+        return false;
     }
 
     public static boolean isTerrainBlock(Block block) {

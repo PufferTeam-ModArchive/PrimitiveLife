@@ -1,6 +1,8 @@
 package net.pufferlab.primal.utils;
 
 import net.minecraft.block.Block;
+import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.tileentity.TileEntity;
@@ -83,6 +85,12 @@ public class WorldUtils {
             return !server.loadingChunks.contains(k);
         }
         return false;
+    }
+
+    public static void destroyBlock(EntityPlayer player, int x, int y, int z) {
+        if (player instanceof EntityPlayerMP playerMP) {
+            playerMP.theItemInWorldManager.tryHarvestBlock(x, y, z);
+        }
     }
 
     public static void setBlock(World world, int x, int y, int z, Block block, int meta) {

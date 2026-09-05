@@ -9,15 +9,12 @@ import net.minecraftforge.common.util.ForgeDirection;
 import net.pufferlab.primal.tileentities.ITile;
 import net.pufferlab.primal.tileentities.TileEntityFarmland;
 import net.pufferlab.primal.utils.BlockUtils;
-import net.pufferlab.primal.utils.HashUtils;
-
-import gnu.trove.list.TLongList;
-import gnu.trove.list.array.TLongArrayList;
+import net.pufferlab.primal.utils.PosList;
 
 public class NetworkMoisture {
 
     List<ITile> tiles = new ArrayList<>();
-    TLongList waterBlocks = new TLongArrayList();
+    PosList waterBlocks = new PosList();
 
     public static void generateNetwork(ITile te) {
         if (te == null) return;
@@ -29,12 +26,12 @@ public class NetworkMoisture {
                 float best = 0.0F;
 
                 for (int i = 0; i < network.waterBlocks.size(); i++) {
-                    long coord = network.waterBlocks.get(i);
-                    float moisture = getMoisture(tef, coord);
+                    int x = network.waterBlocks.getX(i);
+                    int y = network.waterBlocks.getY(i);
+                    int z = network.waterBlocks.getZ(i);
 
-                    if (moisture > best) {
-                        best = moisture;
-                    }
+                    float moisture = getMoisture(tef, x, y, z);
+                    best = Math.max(moisture, best);
                 }
 
                 tef.setMoisture(best);
@@ -43,11 +40,10 @@ public class NetworkMoisture {
 
     }
 
-    private static float getMoisture(ITile tef, long coord) {
-        int waterX = HashUtils.unpackX(coord);
-        int waterZ = HashUtils.unpackZ(coord);
-
+    private static float getMoisture(ITile tef, int waterX, int y, int waterZ) {
         int dx = Math.abs(tef.getX() - waterX);
+        int dy = Math.abs(tef.getY() - y);
+        if (dy > 1) return 0.0F;
         int dz = Math.abs(tef.getZ() - waterZ);
 
         float dist = Math.max(dx, dz);
@@ -76,9 +72,8 @@ public class NetworkMoisture {
                 Block block = te.getWorld()
                     .getBlock(offsetX, offsetY, offsetZ);
                 if (BlockUtils.isWaterBlock(block)) {
-                    long coord = HashUtils.packCoord(offsetX, offsetY, offsetZ);
-                    if (!this.waterBlocks.contains(coord)) {
-                        this.waterBlocks.add(coord);
+                    if (!this.waterBlocks.contains(offsetX, offsetY, offsetZ)) {
+                        this.waterBlocks.add(offsetX, offsetY, offsetZ);
                     }
                 }
                 TileEntity neighbourTE = te.getWorld()

@@ -14,6 +14,7 @@ import net.minecraftforge.event.world.BlockEvent;
 import net.pufferlab.primal.*;
 import net.pufferlab.primal.blocks.BlockMetaDirt;
 import net.pufferlab.primal.blocks.BlockMetaGrass;
+import net.pufferlab.primal.network.NetworkTree;
 import net.pufferlab.primal.utils.BlockUtils;
 import net.pufferlab.primal.utils.ItemUtils;
 
@@ -199,6 +200,12 @@ public class ToolHandler implements IEventHandler {
                 if (ItemUtils.isBrokenTool(heldItem)) {
                     event.drops.clear();
                     event.harvester.destroyCurrentEquippedItem();
+                }
+            }
+
+            if (Config.fallingTree.getBoolean()) {
+                if (BlockUtils.isLogBlock(event.block)) {
+                    NetworkTree.generateAndDestroyTree(event.world, event.x, event.y, event.z, event.harvester);
                 }
             }
 

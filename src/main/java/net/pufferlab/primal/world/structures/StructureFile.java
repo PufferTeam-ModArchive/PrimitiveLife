@@ -183,6 +183,10 @@ public class StructureFile {
         }
 
         StructureBlockList blockList = file.getList(facing);
+        if (blockList == null) {
+            Primal.LOG.error("Tried to generate {} | facing {}", file.name, facing);
+            return;
+        }
         for (StructureBlock block : blockList.blockMap.values()) {
             byte[] coords = block.coords;
             for (int j = 0; j < coords.length; j += 3) {
