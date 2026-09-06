@@ -136,4 +136,9 @@ public class HashUtils {
     public static float getA(int color) {
         return ((color >> 24) & 0xFF) / 255f;
     }
+
+    // Block
+    public static int pack(short a, short b) {
+        return ((a & 0xFFFF) << 16) | (b & 0xFFFF);
+    }
 }

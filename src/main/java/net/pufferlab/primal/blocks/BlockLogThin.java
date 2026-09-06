@@ -41,6 +41,10 @@ public class BlockLogThin extends Block implements IPrimalBlock, IMetaBlock {
         this.name = wood.getName();
         this.wood = wood;
         this.field_150168_M = wood.types;
+        this.wood.setLogThinBlock(this, 0);
+        this.wood.setStrippedLogThinBlock(this, 1);
+        this.wood.setWoodThinBlock(this, 2);
+        this.wood.setStrippedWoodThinBlock(this, 3);
         this.names = wood.thinTypes;
         this.setStepSound(Block.soundTypeWood);
         this.setHardness(2.0F);
@@ -60,7 +64,7 @@ public class BlockLogThin extends Block implements IPrimalBlock, IMetaBlock {
     }
 
     public float getMargin(int meta) {
-        int type = meta & 12;
+        int type = this.wood.getOffset(meta);
         if (type == 0) {
             return 0.125F;
         }

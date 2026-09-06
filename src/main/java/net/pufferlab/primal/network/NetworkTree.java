@@ -5,6 +5,7 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.world.World;
 import net.minecraftforge.common.util.ForgeDirection;
+import net.pufferlab.primal.entities.player.PlayerData;
 import net.pufferlab.primal.utils.BlockUtils;
 import net.pufferlab.primal.utils.PosList;
 import net.pufferlab.primal.utils.WorldUtils;
@@ -15,10 +16,12 @@ public class NetworkTree {
     public int logAmount = 0;
     PosList treeBlocks = new PosList();
 
-    public static void generateAndDestroyTree(World world, int x, int y, int z, EntityPlayer player) {
-        if (player == null) return;
+    public static boolean generateAndDestroyTree(World world, int x, int y, int z, EntityPlayer player) {
+        if (player == null) return false;
         NetworkTree network = generateTree(world, x, y, z);
         if (network.isValidTree) {
+            PlayerData data = PlayerData.get(player);
+            data.setBreakingTree(true);
             int initialDamage = player.getHeldItem()
                 .getItemDamage();
             for (int i = 0; i < network.treeBlocks.size(); i++) {
@@ -45,7 +48,10 @@ public class NetworkTree {
             }
             ItemStack stack = player.getHeldItem();
             stack.damageItem(network.logAmount, player);
+            data.setBreakingTree(false);
+            return true;
         }
+        return false;
     }
 
     public static NetworkTree generateTree(World world, int x, int y, int z) {

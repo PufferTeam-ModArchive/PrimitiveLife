@@ -10,7 +10,7 @@ import net.pufferlab.primal.utils.NBTType;
 
 public class StructureBlockList {
 
-    public Map<String, StructureBlock> blockMap = new HashMap<>();
+    private final Map<String, StructureBlock> blockMap = new HashMap<>();
 
     public StructureBlockList() {
 
@@ -34,6 +34,10 @@ public class StructureBlockList {
         }
 
         structureBlock.addCoord(x, y, z);
+    }
+
+    public Collection<StructureBlock> values() {
+        return blockMap.values();
     }
 
     public void writeToNBT(NBTTagCompound nbt) {
@@ -67,7 +71,7 @@ public class StructureBlockList {
     @Override
     public String toString() {
         StringBuilder builder = new StringBuilder();
-        for (StructureBlock block : blockMap.values()) {
+        for (StructureBlock block : values()) {
             builder.append(block.toString());
             builder.append("|");
         }

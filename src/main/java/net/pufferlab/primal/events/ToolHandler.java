@@ -14,9 +14,11 @@ import net.minecraftforge.event.world.BlockEvent;
 import net.pufferlab.primal.*;
 import net.pufferlab.primal.blocks.BlockMetaDirt;
 import net.pufferlab.primal.blocks.BlockMetaGrass;
+import net.pufferlab.primal.entities.player.PlayerData;
 import net.pufferlab.primal.network.NetworkTree;
 import net.pufferlab.primal.utils.BlockUtils;
 import net.pufferlab.primal.utils.ItemUtils;
+import net.pufferlab.primal.utils.WoodType;
 
 import cpw.mods.fml.common.eventhandler.Event;
 import cpw.mods.fml.common.eventhandler.SubscribeEvent;
@@ -136,51 +138,43 @@ public class ToolHandler implements IEventHandler {
                     }
                 }
             }
-            if (ItemUtils.isKnifeTool(heldItem) && Mods.efr.isLoaded()) {
+            if (ItemUtils.isKnifeTool(heldItem)) {
                 World world = event.world;
                 Block block = world.getBlock(event.x, event.y, event.z);
                 int meta = world.getBlockMetadata(event.x, event.y, event.z);
-                Block target = null;
+                WoodType woodType = WoodType.getWoodType(block, meta);
+                if (woodType != null && woodType.bark != null) {
+                    Block target = woodType.getStrippedBlock(block, meta);
+                    int targetMeta = woodType.getStrippedMeta(block, meta);
+                    if (target != null && targetMeta >= 0) {
+                        ForgeDirection side = ForgeDirection.getOrientation(event.face);
 
-                ForgeDirection side = ForgeDirection.getOrientation(event.face);
+                        int offsetX = side.offsetX;
+                        int offsetY = side.offsetY;
+                        int offsetZ = side.offsetZ;
 
-                int offsetX = side.offsetX;
-                int offsetY = side.offsetY;
-                int offsetZ = side.offsetZ;
-                if (block == Blocks.log) {
-                    target = Mods.efr.getModBlock("log_stripped");
-                } else if (block == Blocks.log2) {
-                    target = Mods.efr.getModBlock("log2_stripped");
-                }
+                        ItemStack droppedStack = new ItemStack(woodType.bark, 1, woodType.barkMeta);
+                        world.setBlock(event.x, event.y, event.z, target, targetMeta, 2);
+                        heldItem.damageItem(1, event.entityPlayer);
+                        BlockUtils.playSound(event.world, event.x, event.y, event.z, block);
 
-                if (target != null) {
-                    int woodType = meta & 3;
-                    ItemStack droppedStack = null;
-                    world.setBlock(event.x, event.y, event.z, target, meta, 2);
-                    heldItem.damageItem(1, event.entityPlayer);
-                    BlockUtils.playSound(event.world, event.x, event.y, event.z, Blocks.log);
+                        event.entityPlayer.swingItem();
+                        if (!world.isRemote) {
+                            EntityItem entityItem = new EntityItem(
+                                world,
+                                event.x + 0.5 + offsetX,
+                                event.y + 0.5 + offsetY,
+                                event.z + 0.5 + offsetZ,
+                                droppedStack);
 
-                    if (block == Blocks.log) {
-                        droppedStack = new ItemStack(Registry.bark, 1, woodType);
-                    } else {
-                        droppedStack = new ItemStack(Registry.bark, 1, woodType + 4);
-                    }
-
-                    event.entityPlayer.swingItem();
-                    if (!world.isRemote) {
-                        EntityItem entityItem = new EntityItem(
-                            world,
-                            event.x + 0.5 + offsetX,
-                            event.y + 0.5 + offsetY,
-                            event.z + 0.5 + offsetZ,
-                            droppedStack);
-
-                        entityItem.motionX = world.rand.nextGaussian() * 0.005D;
-                        entityItem.motionY = 0.02D;
-                        entityItem.motionZ = world.rand.nextGaussian() * 0.005D;
-                        world.spawnEntityInWorld(entityItem);
+                            entityItem.motionX = world.rand.nextGaussian() * 0.005D;
+                            entityItem.motionY = 0.02D;
+                            entityItem.motionZ = world.rand.nextGaussian() * 0.005D;
+                            world.spawnEntityInWorld(entityItem);
+                        }
                     }
                 }
+
             }
         }
     }
@@ -205,7 +199,24 @@ public class ToolHandler implements IEventHandler {
 
             if (Config.fallingTree.getBoolean()) {
                 if (BlockUtils.isLogBlock(event.block)) {
-                    NetworkTree.generateAndDestroyTree(event.world, event.x, event.y, event.z, event.harvester);
+                    PlayerData data = PlayerData.get(event.harvester);
+                    if (!data.isBreakingTree()) {
+                        NetworkTree.generateAndDestroyTree(event.world, event.x, event.y, event.z, event.harvester);
+                    }
+                    if (data.isBreakingTree()) {
+                        WoodType woodType = WoodType.getWoodType(event.block, event.blockMetadata);
+                        if (woodType != null) {
+                            Block block = woodType.getLogBlock(event.block, event.blockMetadata);
+                            int meta = woodType.getLogMeta(event.block, event.blockMetadata);
+                            if (block != null && meta >= 0) {
+                                event.drops.clear();
+                                ItemStack stack = new ItemStack(block, 1, meta);
+                                event.drops.add(stack);
+                            }
+                        } else {
+                            Primal.LOG.error("Can't get wood type for log.");
+                        }
+                    }
                 }
             }
 

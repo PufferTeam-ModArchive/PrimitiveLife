@@ -40,7 +40,7 @@ public class StructureRotated {
         for (int k = 0; k < 3; k++) {
             structureLists[k + 1] = new StructureBlockList();
         }
-        for (StructureBlock block : structureLists[0].blockMap.values()) {
+        for (StructureBlock block : structureLists[0].values()) {
             byte[] coords = block.coords;
             byte[][] coordsRotated = new byte[3][coords.length];
             for (int j = 0; j < coords.length; j += 3) {

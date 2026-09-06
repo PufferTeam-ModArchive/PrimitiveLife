@@ -18,11 +18,14 @@ public class PlayerData implements IExtendedEntityProperties {
     private final EntityPlayer player;
     private boolean temperatureDebug;
     private boolean blockInfoDebug;
+
     private long pos1Coords;
     private boolean pos1CoordsValid;
     private long pos2Coords;
     private boolean pos2CoordsValid;
     private boolean coordChanged;
+
+    private boolean isBreakingTree;
 
     public PlayerData(EntityPlayer player) {
         this.player = player;
@@ -30,6 +33,14 @@ public class PlayerData implements IExtendedEntityProperties {
 
     public PlayerData() {
         this.player = null;
+    }
+
+    public boolean isBreakingTree() {
+        return isBreakingTree;
+    }
+
+    public void setBreakingTree(boolean breakingTree) {
+        isBreakingTree = breakingTree;
     }
 
     public boolean getTemperatureDebug() {

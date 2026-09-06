@@ -187,7 +187,7 @@ public class StructureFile {
             Primal.LOG.error("Tried to generate {} | facing {}", file.name, facing);
             return;
         }
-        for (StructureBlock block : blockList.blockMap.values()) {
+        for (StructureBlock block : blockList.values()) {
             byte[] coords = block.coords;
             for (int j = 0; j < coords.length; j += 3) {
                 int x0 = coords[j];

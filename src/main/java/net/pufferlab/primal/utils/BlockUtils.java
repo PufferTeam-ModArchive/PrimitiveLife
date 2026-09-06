@@ -102,13 +102,13 @@ public class BlockUtils {
     }
 
     public static String getNameFromBlock(Block block, int meta) {
-        return getNameFromBlock(block) + "|" + meta;
+        return getNameFromBlock(block) + "$" + meta;
     }
 
     public static String getNameFromBlock(Block block, int meta, NBTTagCompound nbt) {
         String tagString = "";
         if (nbt != null) {
-            tagString = "|" + nbt.toString();
+            tagString = "$" + nbt.toString();
         }
         return getNameFromBlock(block, meta) + tagString;
     }
@@ -117,12 +117,18 @@ public class BlockUtils {
 
     public static Block getBlockFromName(String name) {
         if (name.equals("null")) return Blocks.air;
+        if (name.contains("$")) return getBlockFromName(name.split("\\$")[0]);
         Block block = blockMap.get(name);
         if (block == null) {
             String[] blockSplit = name.split(":");
             block = GameRegistry.findBlock(blockSplit[0], blockSplit[1]);
         }
         return block;
+    }
+
+    public static int getMetaFromName(String name) {
+        if (name.contains("$")) return Integer.parseInt(name.split("\\$")[1]);
+        return -1;
     }
 
     public static boolean hasSolidWallsTop(World world, int x, int y, int z) {

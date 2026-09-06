@@ -8,6 +8,8 @@ import net.pufferlab.primal.Primal;
 
 public class WoodType implements IPrimalType {
 
+    public static final BlockMap.Single<WoodType> blockMap = new BlockMap.Single<>();
+
     public String name;
     public String[] types;
     public String[] thinTypes;
@@ -21,6 +23,16 @@ public class WoodType implements IPrimalType {
     public int woodMeta;
     public Block strippedWood;
     public int strippedWoodMeta;
+
+    public Block logThin;
+    public int logThinMeta;
+    public Block strippedLogThin;
+    public int strippedLogThinMeta;
+    public Block woodThin;
+    public int woodThinMeta;
+    public Block strippedWoodThin;
+    public int strippedWoodThinMeta;
+
     public Item bark;
     public int barkMeta;
 
@@ -42,34 +54,140 @@ public class WoodType implements IPrimalType {
         return this;
     }
 
+    public static WoodType getWoodType(Block block, int meta) {
+        return blockMap.get(block, getMeta(meta));
+    }
+
+    public Block getLogBlock(Block block, int meta) {
+        int correctMeta = getMeta(meta);
+        if (block == wood && correctMeta == woodMeta) {
+            return log;
+        }
+        if (block == strippedWoodThin && correctMeta == strippedWoodThinMeta) {
+            return strippedLogThin;
+        }
+        return null;
+    }
+
+    public Block getStrippedBlock(Block block, int meta) {
+        int correctMeta = getMeta(meta);
+        if (block == log && correctMeta == logMeta) {
+            return strippedLog;
+        }
+        if (block == wood && correctMeta == woodMeta) {
+            return strippedWood;
+        }
+        if (block == logThin && correctMeta == logThinMeta) {
+            return strippedLogThin;
+        }
+        if (block == woodThin && correctMeta == woodThinMeta) {
+            return strippedWoodThin;
+        }
+        return null;
+    }
+
+    public int getLogMeta(Block block, int meta) {
+        int correctMeta = getMeta(meta);
+        int offsetMeta = getOffset(meta);
+        if (block == wood && correctMeta == woodMeta) {
+            return logMeta + offsetMeta;
+        }
+        if (block == strippedWoodThin && correctMeta == strippedWoodThinMeta) {
+            return strippedLogThinMeta + offsetMeta;
+        }
+        return -1;
+    }
+
+    public int getStrippedMeta(Block block, int meta) {
+        int correctMeta = getMeta(meta);
+        int offsetMeta = getOffset(meta);
+        if (block == log && correctMeta == logMeta) {
+            return strippedLogMeta + offsetMeta;
+        }
+        if (block == wood && correctMeta == woodMeta) {
+            return strippedWoodMeta + offsetMeta;
+        }
+        if (block == logThin && correctMeta == logThinMeta) {
+            return strippedLogThinMeta + offsetMeta;
+        }
+        if (block == woodThin && correctMeta == woodThinMeta) {
+            return strippedWoodMeta + offsetMeta;
+        }
+        return -1;
+    }
+
     public WoodType setLogBlock(Block log, int meta) {
         this.log = log;
         this.logMeta = meta;
+        putMap(this.log, this.logMeta);
+        return this;
+    }
+
+    public WoodType setLogThinBlock(Block log, int meta) {
+        this.logThin = log;
+        this.logThinMeta = meta;
+        putMap(this.logThin, this.logThinMeta);
         return this;
     }
 
     public WoodType setStrippedLogBlock(Block log, int meta) {
         this.strippedLog = log;
         this.strippedLogMeta = meta;
+        putMap(this.strippedLog, this.strippedLogMeta);
+        return this;
+    }
+
+    public WoodType setStrippedLogThinBlock(Block log, int meta) {
+        this.strippedLogThin = log;
+        this.strippedLogThinMeta = meta;
+        putMap(this.strippedLogThin, this.strippedLogThinMeta);
         return this;
     }
 
     public WoodType setWoodBlock(Block log, int meta) {
         this.wood = log;
         this.woodMeta = meta;
+        putMap(this.wood, this.woodMeta);
+        return this;
+    }
+
+    public WoodType setWoodThinBlock(Block log, int meta) {
+        this.woodThin = log;
+        this.woodThinMeta = meta;
+        putMap(this.woodThin, this.woodThinMeta);
         return this;
     }
 
     public WoodType setStrippedWoodBlock(Block log, int meta) {
         this.strippedWood = log;
         this.strippedWoodMeta = meta;
+        putMap(this.strippedWood, this.strippedWoodMeta);
         return this;
     }
 
-    public WoodType setBarkBlock(Item item, int meta) {
+    public WoodType setStrippedWoodThinBlock(Block log, int meta) {
+        this.strippedWoodThin = log;
+        this.strippedWoodThinMeta = meta;
+        putMap(this.strippedWoodThin, this.strippedWoodThinMeta);
+        return this;
+    }
+
+    public WoodType setBarkItem(Item item, int meta) {
         this.bark = item;
         this.barkMeta = meta;
         return this;
+    }
+
+    public void putMap(Block log, int logMeta) {
+        blockMap.put(log, logMeta, this);
+    }
+
+    public static int getMeta(int meta) {
+        return meta & 3;
+    }
+
+    public static int getOffset(int meta) {
+        return (meta & 12);
     }
 
     public ItemStack getLogBlock() {

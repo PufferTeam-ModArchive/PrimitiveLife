@@ -14,7 +14,7 @@ public class ItemWood extends ItemMeta {
         super(WoodType.getNames(woodType), name);
         this.woodType = woodType;
         for (int i = 0; i < woodType.length; i++) {
-            woodType[i].setBarkBlock(this, i);
+            woodType[i].setBarkItem(this, i);
         }
     }
 
